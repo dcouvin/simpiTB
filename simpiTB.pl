@@ -2,15 +2,15 @@
 use strict;
 #use warnings;
 
-#Examples of use:
+#Examples of use: 
 #perl simpiTB.pl <options> *.fasta
 #perl simpiTB.pl <options> *.fastq
 #perl simpiTB.pl <options> *.fastq.gz
-#perl simpiTB.pl <options> list.txt
+#perl simpiTB.pl <options> list.txt   
 #(please note that the txt file must finish by extension ".txt", and it must contain one accession perl line such as the following example)
-#SRR13015794
+#SRR13015794 
 #SRR13015795
-#accessions could also be separated by commas as follows:
+#accessions could also be separated by commas as follows: 
 #perl simpiTB.pl SRR13015794,SRR13015795,SRR13015796
 
 #variables
@@ -26,7 +26,7 @@ my %h12miru = (); # hash for 12-loci MIRU-VNTRs
 my %h15miru = (); # hash for 15-loci MIRU-VNTRs
 my @tabFiles = ();
 #my @tabRuns = ();
-my %hResistance = ();
+my %hResistance = (); 
 my %hLineageMyk = (); # lineage from mykrobe
 my %galruSpol = ();
 my %spollineages = ();
@@ -39,7 +39,7 @@ my %hLineageTBP = ();
 my %hDrugTBP = ();
 my %hDrugListTBP = ();
 my %hFLC = ();  # results for fast-lineage-caller program
-my %hSB =();
+my %hSB =(); 
 my $sbFile = "SBnumbers_Mbovis_240221.tab";
 my $useMykrobe = 0;
 my $useTBP = 0;
@@ -79,6 +79,7 @@ if($spadesProg){
   print "spades is...............OK \n";
 }
 
+print "\n";
 
 if (@ARGV<1) {
   help_user_simple($0);
@@ -92,7 +93,7 @@ if ($ARGV[0] eq "--help" || $ARGV[0] eq "-h") {
 
 if ($ARGV[0] eq "--version" || $ARGV[0] eq "-v") {
   program_version($0);
-  exit 0;
+  exit 0;	
 }
 
 #FASTA/Q files
@@ -106,7 +107,7 @@ if(@ARGV){
         $isFasta = 1;
     }
     elsif ($arg =~ m/.fastq/ or $arg =~ m/.fq/ or $arg =~ m/.fq.gz/ or $arg =~ m/.fastq.gz/){
-        print "FASTQ file: $arg\n";
+	print "FASTQ file: $arg\n";
         #$seqfastq = $arg;
         my $readName = $arg;
         if ($arg =~ m/_1.fastq.gz/ or $arg =~ m/_R1.fastq.gz/ or $arg =~ m/_2.fastq.gz/ or $arg =~ m/_R2.fastq.gz/ ){
@@ -117,7 +118,7 @@ if(@ARGV){
           $readName =~ s/_R2.fastq.gz//g;
           #print "READ NAME is : $readName\n";
           $hReads{$readName} = $readName;
-          @tabFiles = keys %hReads;
+          @tabFiles = keys %hReads;  
           #push (@tabFiles,$readName);
           $isFastq = 0;
           $isList = 1;
@@ -126,7 +127,7 @@ if(@ARGV){
           push (@tabFiles,$arg);
           $isFastq = 1;
         }
-
+        
     }
     elsif ($arg =~ m/.txt/){
         if (-e $arg){
@@ -138,11 +139,11 @@ if(@ARGV){
     }
     elsif ($arg =~ m/,/){
         @tabFiles = split (/,/, $arg) ;
-
+            
         $isList = 1;
     }
   }
-}
+}  
 
 ##requirements
 for (my $i = 0; $i <= $#ARGV; $i++) {
@@ -179,8 +180,8 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     elsif ($ARGV[$i]=~/--resfinder/i or $ARGV[$i]=~/-rf/i) {
         $useResFinder = 1;
     }
-
-
+    
+   
 }
 
 if(-d "GFF/") { system("rm -rf GFF/");  }
@@ -207,24 +208,23 @@ foreach my $seq (@tabFiles){
     my $tbProfilerCmd = "tb-profiler profile --txt "; # DC removed $pathToBin.
     my $fastaTbProfilerCmd = "tb-profiler fasta_profile --txt ";
     print "TBProfiler command: $tbProfilerCmd\n";
-    my $resfinderCmd = "python3 ${pathToBin}/resfinder/run_resfinder.py -o RF -s \"Mycobacterium tuberculosis\" -l 0.6 -t 0.8 --acquired --point -db_res ${pathToBin}/resfinder/db_res
-finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
+    my $resfinderCmd = "python3 ${pathToBin}/resfinder/run_resfinder.py -o RF -s \"Mycobacterium tuberculosis\" -l 0.6 -t 0.8 --acquired --point -db_res ${pathToBin}/resfinder/db_resfinder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
     #RF/pheno_table.txt
 
     if(-e $seq and $isFasta){
         $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py --noQuery -o spotyping --seq $seq ";
         #open GALRU, "galru $seq -t 16 |";
-        if ($doMiru) {
+        if ($doMiru) { 
           print "MIRU analysis from FASTA input files... \n";
-          open MIRU, "python3 ${pathToBin}MIRUReader/MIRUReader.py -r $seq -p mirus |";
+          open MIRU, "python3 ${pathToBin}MIRUReader/MIRUReader.py -r $seq -p mirus |"; 
           readMiru($seq);
         }
         else { $hMIRU{$seq} = "NA"; }
         if ($useMykrobe) {
           #open KROBE, 'sudo singularity exec -B $PWD docker://"quay.io/biocontainers/mykrobe:0.9.0--py37h13b99d1_2" mykrobe predict my_sample tb -f --format csv --seq '. "$seq |";
           open KROBE, "mykrobe predict my_sample tb -f --format csv --seq $seq |";
-        }
-        else {
+	}
+        else {  
           $hResistance{$seq} = "NA";
           $hLineageMyk{$seq} = "NA";
         }
@@ -232,6 +232,14 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
           $resfinderCmd .= " ".$seq;
           system ($resfinderCmd);
           resfinder_out($seq);
+          if(-d "RF/") {
+            system ("rm -rf RF/ "); #remove RF folder
+          }
+          #elsif(-d "RF/"){
+          #  system ("mv -f RF/ $outdir/");
+          #}
+          #else{
+          #}
         }
         if($useRoary){
           my $prokkaCmd = "prokka --force --outdir prokka --prefix result $seq";
@@ -242,20 +250,20 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
           $nameSeq =~  s/\//_/ig;
           $nameSeq =~  s/.fasta//ig;
           $nameSeq =~  s/.fna//ig;
-
+          
           system("mv $gff GFF/${nameSeq}.gff");
-
+          
         }
 
         $fastaTbProfilerCmd = $fastaTbProfilerCmd." -d ".$tbProf." ".$seq." ".$seq;
     }
     elsif(-e $seq and $isFastq){
-
+        
         $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $seq --noQuery -o spotyping ";
-
+        
         #open GALRU, "galru $seq -t 16 |";
         if ($doMiru) {
-          if($spades) {
+          if($spades) { 
             my $nameSeq = $seq;
             #$nameSeq =~  s/\//_/ig; #commented to replace by $seqFolder
             if(-d $seqFolder) { system("rm -rf spades$nameSeq");  } #spades$nameSeq replaced by $seqFolder
@@ -263,34 +271,43 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
             my $pathContig = $seqFolder."/scaffolds.fasta";
             system($spadesCmd);
 
-            if(-e $pathContig) {
-              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";
+            if(-e $pathContig) { 
+              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";  
               readMiru($seq);
 
               if($useResFinder) {
                 $resfinderCmd .= " ".$pathContig;
                 system ($resfinderCmd);
                 resfinder_out($seq);
+
+                if(-d "RF/") {
+                  system ("rm -rf RF/ "); #remove RF folder
+                }
+                #elsif(-d "RF/"){
+                #  system ("mv -f RF/ $outdir/");
+                #}
+                #else{
+                #}
               }
 
             }
-            if(-d $seqFolder)  {
+            if(-d $seqFolder)  { 
               if ($outdir =~  m/\//) { $outdir =~  s/\///i; }
-              system ("cp -f $pathContig $outdir/scaffolds_$seq.fasta"); #removed scaffolds_$seq.fasta?
-              if($removeS) {
-                system ("rm -r -f $seqFolder");
+              system ("cp -f $pathContig $outdir/scaffolds_$seq.fasta"); #removed scaffolds_$seq.fasta? 
+              if($removeS) {  
+                system ("rm -rf $seqFolder"); 
               }
               else { system ("mv -f $seqFolder $outdir/");  }
             }
 
           }
           else{
-            open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $seq -p mirus --nofasta |";
+            open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $seq -p mirus --nofasta |"; 
             readMiru($seq);
           }
         }
-        else {
-          $hMIRU{$seq} = "NA";
+        else { 
+          $hMIRU{$seq} = "NA"; 
           $h15miru{$seq} = "NA";
           $h12miru{$seq} = "NA";
         }
@@ -299,7 +316,7 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
           #open KROBE, 'sudo singularity exec -B $PWD docker://"quay.io/biocontainers/mykrobe:0.9.0--py37h13b99d1_2" mykrobe predict my_sample tb --format csv --seq '. "$seq |";
           open KROBE, "mykrobe predict my_sample tb -f --format csv --seq $seq |";
         }
-        else {
+        else {  
           $hResistance{$seq} = "NA";
           $hLineageMyk{$seq} = "NA";
         }
@@ -317,53 +334,61 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
       if(-e $read1 and -e $read2){
         $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $read1 $read2 --noQuery -o spotyping ";
         #open GALRU, "galru $read1 -t 16 |";
-        if ($doMiru) {
+        if ($doMiru) { 
           if($spades) {
 
-            if(-d $seqFolder) { system("rm -rf $seqFolder");  }
-            my $spadesCmd = "spades --careful -1 $read1 -2 $read2 -o $seqFolder "; # --disable-rr  --isolate? default (last run was 2772 seconds) --only-assembler (2526 seconds) good
- mirus
+            if(-d $seqFolder) { system("rm -rf $seqFolder");  } 
+            my $spadesCmd = "spades --careful -1 $read1 -2 $read2 -o $seqFolder "; # --disable-rr  --isolate? default (last run was 2772 seconds) --only-assembler (2526 seconds) good mirus
             my $pathContig = $seqFolder."/scaffolds.fasta";
             system($spadesCmd);
 
-            if(-e $pathContig) {
-              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";
+            if(-e $pathContig) { 
+              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";  
               readMiru($seq);
 
               if($useResFinder) {
                 $resfinderCmd .= " ".$pathContig;
                 system ($resfinderCmd);
                 resfinder_out($seq);
+
+                if(-d "RF/") {
+                  system ("rm -rf RF/ "); #remove RF folder
+                }
+                #elsif(-d "RF/"){
+                #  system ("mv -f RF/ $outdir/");
+                #}
+                #else{
+                #}
+
               }
 
             }
 
-            if(-d $seqFolder)  {
+            if(-d $seqFolder)  { 
               if ($outdir =~  m/\//) { $outdir =~  s/\///i; }
-              system ("cp -f $pathContig $outdir/scaffolds_$seqFolder.fasta");
-              if($removeS) {
-                system ("rm -r -f $seqFolder");
+              system ("cp -f $pathContig $outdir/scaffolds_$seqFolder.fasta"); 
+              if($removeS) {  
+                system ("rm -r -f $seqFolder"); 
               }
               else { system ("mv -f $seqFolder $outdir/");  }
             }
           }
           else {
-            open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $read1 -p mirus --nofasta |";
+            open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $read1 -p mirus --nofasta |"; 
             readMiru($seq);
           }
         }
-        else {
-          $hMIRU{$seq} = "NA";
+        else { 
+          $hMIRU{$seq} = "NA"; 
           $h15miru{$seq} = "NA";
           $h12miru{$seq} = "NA";
         }
-
+        
         if ($useMykrobe) {
-          #open KROBE, 'sudo singularity exec -B $PWD docker://"quay.io/biocontainers/mykrobe:0.9.0--py37h13b99d1_2" mykrobe predict my_sample tb --format csv --seq '. "$read1 $read2
- |";
+          #open KROBE, 'sudo singularity exec -B $PWD docker://"quay.io/biocontainers/mykrobe:0.9.0--py37h13b99d1_2" mykrobe predict my_sample tb --format csv --seq '. "$read1 $read2 |";
           open KROBE, "mykrobe predict my_sample tb -f --format csv --seq $read1 $read2 |";
         }
-        else {
+        else {  
           $hResistance{$seq} = "NA";
           $hLineageMyk{$seq} = "NA";
         }
@@ -373,8 +398,8 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
       elsif(-e $read1 and ! -e $read2){
         $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $read1 --noQuery -o spotyping ";
         #open GALRU, "galru $read1 -t 16 |";
-        if ($doMiru) {
-          if($spades) {
+        if ($doMiru) {  
+          if($spades) { 
             #my $seqFolder = "spades".$seq;
             #$newstring = $oldstring;
 
@@ -382,23 +407,40 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
             my $pathContig = "${seqFolder}/scaffolds.fasta";
             system($spadesCmd);
 
-            if(-e $pathContig) {
-              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";
+            if(-e $pathContig) { 
+              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";  
               readMiru($seq);
+
+               if($useResFinder) {
+                $resfinderCmd .= " ".$pathContig;
+                system ($resfinderCmd);
+                resfinder_out($seq);
+
+                if(-d "RF/") {
+                  system ("rm -rf RF/ "); #remove RF folder
+                }
+                #elsif(-d "RF/"){
+                #  system ("mv -f RF/ $outdir/");
+                #}
+                #else{
+                #}
+
+              }
             }
-            if(-d $seqFolder)  {
+            
+            if(-d $seqFolder)  { 
               if ($outdir =~  m/\//) { $outdir =~  s/\///i; }
-              system ("cp -f $pathContig $outdir/scaffolds_$seq.fasta");
-              system ("mv -f spades$seq $outdir/");
+              system ("cp -f $pathContig $outdir/scaffolds_$seq.fasta"); 
+              system ("mv -f spades$seq $outdir/"); 
             }
           }
           else {
-            open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $read1 -p mirus --nofasta |";
+            open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $read1 -p mirus --nofasta |"; 
             readMiru($seq);
           }
         }
-        else {
-          $hMIRU{$seq} = "NA";
+        else { 
+          $hMIRU{$seq} = "NA"; 
           $h15miru{$seq} = "NA";
           $h12miru{$seq} = "NA";
         }
@@ -406,13 +448,13 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
           #open KROBE, 'sudo singularity exec -B $PWD docker://"quay.io/biocontainers/mykrobe:0.9.0--py37h13b99d1_2" mykrobe predict my_sample tb --format csv --seq '. "$read1 |";
           open KROBE, "mykrobe predict my_sample tb --format csv --seq $read1 |";
         }
-        else {
+        else {  
           $hResistance{$seq} = "NA";
           $hLineageMyk{$seq} = "NA";
         }
         $tbProfilerCmd = $tbProfilerCmd." -t 16 -d ".$tbProf." -1 ".$read1." -p ".$seq;
       }
-
+  
     }
     else{
         print "Input file does not exist or is not correct....please verify! \n";
@@ -425,26 +467,27 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
     open (SPO, "<spotyping") or die "open : $!";
     while (<SPO>) {
         chomp();
-        print "SPO file: $_\n";
-        my @tab = split (/\t/, $_) ;
+	print "SPO file: $_\n";
+	my @tab = split (/\t/, $_) ;
         $hSPOL{$seq} = $tab[1]."\t".$tab[2]; # $tab[0] replaced by $seq
         $hSPOLoctal{$seq} = $tab[2];
-        #$hSPOL{$tab[0]} = $tab[1]."\t".$tab[2]; #$seq
+	#$hSPOL{$tab[0]} = $tab[1]."\t".$tab[2]; #$seq
     }
     close (SPO) or die "close file error : $!";
-    system ("rm -f spotyping ");
-    system ("rm -f spotyping.log ");
+    system ("rm -f spotyping "); 
+    system ("rm -f spotyping.log "); 
     system ("rm -f spotyping.SpoTyping.tmp.* ");
     system ("rm -rf *.fasta.* ");  # remove files generated when using MIRUReader
     system ("rm -rf *.fna.* ");
-
+    #system ("rm -rf RF/ "); #remove RF folder
+        
     #while (<GALRU>) {
      #   chomp();
      #   $galruSpol{$seq} = "$_";
     #}
     #close (GALRU) or die "close file error : $!";
 
-    # gather SB numbers in hashTable taking into account SBnumbers_Mbovis_240221.tab
+    # gather SB numbers in hashTable taking into account SBnumbers_Mbovis_240221.tab 
     if(-e $sbPath){
       open (SB, "<$sbPath") or die "open : $!";
     }
@@ -456,14 +499,14 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
     while (<SB>) {
         chomp();
         if ($_ =~  m/^SB/) {
-          my @tabSB = split (/\t/, $_) ;
+	  my @tabSB = split (/\t/, $_) ;
           if ($tabSB[2] ne '') { $hSB{$tabSB[2]} = $tabSB[0]; }  # $tabSB[2] replaced by $seq , and removed $tabSB[2] ne ''
-          #$hSPOL{$tab[0]} = $tab[1]."\t".$tab[2]; #$seq
+	  #$hSPOL{$tab[0]} = $tab[1]."\t".$tab[2]; #$seq
         }
     }
     close (SB) or die "close file error : $!";
     }
-
+ 
     if ($useMykrobe) {
     while (<KROBE>) {
         chomp();
@@ -491,98 +534,98 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
         #read results
         $resultTBprof = $tbProf."/results/".$seq.".results.txt";
 
-        open (TBP, "<$resultTBprof") or die "open : $!";
-
+	open (TBP, "<$resultTBprof") or die "open : $!";
+        
         my $lineageTBP = "";
         my $drugTBP = "";
         my $drugListTBP ="";
         my @tabTBP = ();
-
+        
         while (<TBP>) {
           chomp();
           if ($_ =~  m/^Strain/) {
             $_ =~ s/Strain: //;
             $lineageTBP = $_;
-
+            
           }
           elsif ($_ =~  m/^Drug-resistance/) {
             $_ =~ s/Drug-resistance: //;
             $drugTBP = $_;
-
+            
           }
           elsif ($_ =~ m/^Rifampicin/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Rifampicin (R) "; }
           }
           elsif ($_ =~ m/^Ethambutol/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Ethambutol (R) "; }
           }
           elsif ($_ =~ m/^Pyrazinamide/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Pyrazinamide (R) "; }
             print "IN TBProlier File: $drugListTBP\n";
           }
           elsif ($_ =~ m/^Streptomycin/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Streptomycin (R) "; }
           }
           elsif ($_ =~ m/^Fluoroquinolones/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Fluoroquinolones (R) "; }
           }
           elsif ($_ =~  m/^Amikacin/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Amikacin (R) "; }
           }
           elsif ($_ =~  m/^Capreomycin/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Capreomycin (R) "; }
           }
           elsif ($_ =~  m/^Kanamycin/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Kanamycin (R) "; }
           }
           elsif ($_ =~  m/^Cycloserine/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Cycloserine (R) "; }
           }
           elsif ($_ =~  m/^Ethionamide/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Ethionamide (R) "; }
           }
           elsif ($_ =~  m/^Clofazimine/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Clofazimine (R) "; }
           }
           elsif ($_ =~  m/^Para-aminosalicylic acid/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Para-aminosalicylic acid (R) "; }
           }
           elsif ($_ =~  m/^Delamanid/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Delamanid (R) "; }
           }
           elsif ($_ =~  m/^Bedaquiline/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Bedaquiline (R) "; }
           }
           elsif ($_ =~  m/^Linezolid/) {
-            #$_ =~ s/Drug-resistance: //;
+            #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Linezolid (R) "; }
           }
@@ -597,31 +640,30 @@ finder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
         $hDrugListTBP{$seq} = $drugListTBP;
 
         #Fast-Lineage-Caller   (please note that this program is used when TBProf is used because it needs the .vcf file generated by TBP)
-        # @ gzip vcf file from TBP directory (gzip -d
+        # @ gzip vcf file from TBP directory (gzip -d 
         my $vcfTBprof = $tbProf."/vcf/".$seq.".targets.vcf.gz";   # .targets.csq.vcf.gz
         system ("gzip -d -f $vcfTBprof");
-        my $newVCF = $tbProf."/vcf/".$seq.".targets.vcf";
+        my $newVCF = $tbProf."/vcf/".$seq.".targets.vcf"; 
 
         open FLC, "fast-lineage-caller --noheader $newVCF |";
         # read FLC results
         while (<FLC>) {
           chomp();
           my @flc = split (/\t/, $_) ;
-          my $first = shift(@flc);
-          $hFLC{$seq} = join( "\t", @flc );
-          #my $stringFLC = join( "\t", @flc );
+          my $first = shift(@flc); 
+          $hFLC{$seq} = join( "\t", @flc ); 
+          #my $stringFLC = join( "\t", @flc ); 
         }
         close (FLC) or die "close file error : $!";
     }
-
+     
 }
 
 
 #########################
 #Summary files
 open (RECAP,'>', $recap_total_seq) or die "could not open $!"; # removed Spoligotype (Galru)\t
-print RECAP "#ID\tSpoligotype (SpoTyping)\tSpoligo (octal)\t24-loci MIRU-VNTR\t15-loci MIRU-VNTR\t12-loci MIRU-VNTR\tLineage (SpolLineages)\tSpoligotype International Type (SIT)\tSBn
-umber (Mbovis)\tResistance (Mykrobe)\tLineage (Mykrobe)\tResistance (TBProfiler)\tLineage (TBProfiler)\tResFinder\tColl2014\tFreschi2020\tLipworth2019\tShitikov2017\tStucki2016\n";
+print RECAP "#ID\tSpoligotype (SpoTyping)\tSpoligo (octal)\t24-loci MIRU-VNTR\t15-loci MIRU-VNTR\t12-loci MIRU-VNTR\tLineage (SpolLineages)\tSpoligotype International Type (SIT)\tSBnumber (Mbovis)\tResistance (Mykrobe)\tLineage (Mykrobe)\tResistance (TBProfiler)\tLineage (TBProfiler)\tResFinder\tColl2014\tFreschi2020\tLipworth2019\tShitikov2017\tStucki2016\n";
 
 #SpolLineages and GrapeTree files
 open (LINE,'>', $spollineages_entries) or die "could not open $!";
@@ -629,15 +671,10 @@ open (LINE,'>', $spollineages_entries) or die "could not open $!";
 if($useGrape){
 open (GRAPE,'>', $grapetree_entries) or die "could not open $!";
 if($doMiru){
-  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_
-19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39
-\tGene_40\tGene_41\tGene_42\tGene_43\tGene_44\tGene_45\tGene_46\tGene_47\tGene_48\tGene_49\tGene_50\tGene_51\tGene_52\tGene_53\tGene_54\tGene_55\tGene_56\tGene_57\tGene_58\tGene_59\t
-Gene_60\tGene_61\tGene_62\tGene_63\tGene_64\tGene_65\tGene_66\tGene_67\n";
+  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\tGene_44\tGene_45\tGene_46\tGene_47\tGene_48\tGene_49\tGene_50\tGene_51\tGene_52\tGene_53\tGene_54\tGene_55\tGene_56\tGene_57\tGene_58\tGene_59\tGene_60\tGene_61\tGene_62\tGene_63\tGene_64\tGene_65\tGene_66\tGene_67\n";
 }
 else{
-  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_
-19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39
-\tGene_40\tGene_41\tGene_42\tGene_43\n";
+  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\n";
 }
 
 #my $count = 0;
@@ -651,7 +688,7 @@ foreach my $key (@tabFiles)
 
   if($useGrape){
     my @spo43 = split (//, $tabSpo[0]) ;
-    my $spolString = join( "\t", @spo43 );
+    my $spolString = join( "\t", @spo43 ); 
 
     my @miru24 = split (//, $hMIRU{$key}) ;
     my $miruString = join( "\t", @miru24 );
@@ -664,18 +701,18 @@ foreach my $key (@tabFiles)
     #$miruString =~  s/-/0/ig;
     my @tabKey = split (/\./, $key) ;
     #my $id = $count++; # $tabKey[0]
-        if($doMiru){
+	if($doMiru){
       print GRAPE "$tabKey[0]\t$spolString\t$miruString\n";
-        }
-        else{
-          print GRAPE "$tabKey[0]\t$spolString\n";
-        }
+	}
+	else{
+	  print GRAPE "$tabKey[0]\t$spolString\n";
+	}
   }
-
+  
 }
 
 if($useGrape){ close (GRAPE) or die "close file error : $!"; }
-close (LINE) or die "close file error : $!";
+close (LINE) or die "close file error : $!";  
 
 
 #SpolLineages
@@ -690,9 +727,9 @@ system($spollineages_Cmd);
           $spollineages{$tabRes[0]} = "$tabRes[5]\t$tabRes[12]";
         }
       }
-      close (RESLINE) or die "close file error : $!";
+      close (RESLINE) or die "close file error : $!"; 
 
-if(-e $spollineages_entries and -e "outputSL.csv") {
+if(-e $spollineages_entries and -e "outputSL.csv") {   
   system("mv $spollineages_entries outputSL.csv $outdir");
 }
 
@@ -706,8 +743,8 @@ if($tabSize >= 4){   # the NJ tree file will be generated only if $tabSize is >=
 }
 system("mv $grapetree_entries $outdir");
 
-if(-e "grapetreeNJ.nwk") {
-  system("mv grapetreeNJ.nwk $outdir");
+if(-e "grapetreeNJ.nwk") { 
+  system("mv grapetreeNJ.nwk $outdir"); 
 }
 }
 
@@ -721,17 +758,16 @@ foreach my $key2 (@tabFiles)
   if ($hLineageMyk{$key2} eq '') { $hLineageMyk{$key2} = "NA"; }
   if ($hDrugTBP{$key2} eq '') { $hDrugTBP{$key2} = "NA"; }
   if ($hLineageTBP{$key2} eq '') { $hLineageTBP{$key2} = "NA"; }
-  if ($hSB{$hSPOLoctal{$key2}} eq '' ) { $hSB{$hSPOLoctal{$key2}} = "NA"; }
+  if ($hSB{$hSPOLoctal{$key2}} eq '' ) { $hSB{$hSPOLoctal{$key2}} = "NA"; } 
   if ($hRF{$key2} eq '' ) { $hRF{$key2} = "NA"; }
 
   # else { $hSB{$hSPOLoctal{$key2}} = "NA"; }
   # print "  $key2 spoligotype is: $hSPOL{$key2} ; GALRU: $galruSpol{$key2} ;  24-loci MIRU value is: $hMIRU{$key2}\n"; # removed $galruSpol{$key2}\t
-  print RECAP "$key2\t$hSPOL{$key2}\t$hMIRU{$key2}\t$h15miru{$key2}\t$h12miru{$key2}\t$spollineages{$key2}\t$hSB{$hSPOLoctal{$key2}}\t$hResistance{$key2}\t$hLineageMyk{$key2}\t$hDrug
-TBP{$key2}: $hDrugListTBP{$key2}\t$hLineageTBP{$key2}\t$hRF{$key2}\t$hFLC{$key2}\n";
+  print RECAP "$key2\t$hSPOL{$key2}\t$hMIRU{$key2}\t$h15miru{$key2}\t$h12miru{$key2}\t$spollineages{$key2}\t$hSB{$hSPOLoctal{$key2}}\t$hResistance{$key2}\t$hLineageMyk{$key2}\t$hDrugTBP{$key2}: $hDrugListTBP{$key2}\t$hLineageTBP{$key2}\t$hRF{$key2}\t$hFLC{$key2}\n";
 
 }
 
-close (RECAP) or die "close file error : $!";
+close (RECAP) or die "close file error : $!";  
 
 
 if($useRoary and -d "GFF/"){
@@ -782,7 +818,7 @@ print "***** Total time: $total seconds OR $min minutes OR $hrs hours *****\n";
 sub readMiru {
 # read MIRU results
   my $seq = shift @_;
-    if ($doMiru) {
+    if ($doMiru) { 
     while (<MIRU>) {
         chomp();
         if ($_ =~  m/^mirus/) {
@@ -797,85 +833,82 @@ sub readMiru {
           $_ =~  s/15/F/ig;
 
           $_ =~  s/ND/-/ig;
-          my @tm = split (/\t/, $_) ; # number (into brackets) indicates MIRU position according to SITVIT nomenclature
+          my @tm = split (/\t/, $_) ; # number (into brackets) indicates MIRU position according to SITVIT nomenclature 
+	  
+    #0154(1);0424(19);0577(15);0580(2);0802(12);0960(3);1644(4);1955(20);2059(5);2163b(16);2165(13);2347(21);2401(22);2461(14);2531(6);2687(7);2996(8);3007(9);3171(23);3192(10);3690;4052(17);4156(18);4348(11)
 
-    #0154(1);0424(19);0577(15);0580(2);0802(12);0960(3);1644(4);1955(20);2059(5);2163b(16);2165(13);2347(21);2401(22);2461(14);2531(6);2687(7);2996(8);3007(9);3171(23);3192(10);3690;
-4052(17);4156(18);4348(11)
-
-    $hMIRU{$seq} = $tm[1].$tm[4].$tm[6].$tm[7].$tm[9].$tm[15].$tm[16].$tm[17].$tm[18].$tm[20].$tm[24].$tm[5].$tm[11].$tm[14].$tm[3].$tm[10].$tm[22].$tm[23].$tm[2].$tm[8].$tm[12].$tm[
-13].$tm[19].$tm[21];
+    $hMIRU{$seq} = $tm[1].$tm[4].$tm[6].$tm[7].$tm[9].$tm[15].$tm[16].$tm[17].$tm[18].$tm[20].$tm[24].$tm[5].$tm[11].$tm[14].$tm[3].$tm[10].$tm[22].$tm[23].$tm[2].$tm[8].$tm[12].$tm[13].$tm[19].$tm[21];
 
     $h12miru{$seq} = substr($hMIRU{$seq},0,12);  #=$tm[1].$tm[4].$tm[6].$tm[7].$tm[9].$tm[15].$tm[16].$tm[17].$tm[18].$tm[20].$tm[24].$tm[5];
     $h15miru{$seq} = $tm[4].$tm[6].$tm[7].$tm[17].$tm[20].$tm[5].$tm[11].$tm[3].$tm[10].$tm[22].$tm[23].$tm[2].$tm[8].$tm[13].$tm[21];
 
         }
-    }
+    }  
     close (MIRU) or die "close file error : $!";
     }
 }
 # display global help document
 sub help_user_simple {
-        my $programme = shift @_;
-        print STDERR  "Usage : perl $programme [options] *.fasta | *.fastq | accessions_list.txt | accession1,accession2...\n";
-        print "Type perl $programme --version or perl $programme -v to get the current version\n";
-        print "Type perl $programme --help or perl $programme -h to get full help\n";
+	my $programme = shift @_;
+	print STDERR  "Usage : perl $programme [options] *.fasta | *.fastq | accessions_list.txt | accession1,accession2...\n";
+	print "Type perl $programme --version or perl $programme -v to get the current version\n";
+	print "Type perl $programme --help or perl $programme -h to get full help\n";
 }
 #------------------------------------------------------------------------------
 # display full help document
 sub help_user_advance {
-        print <<HEREDOC;
-
-        Name:
-                $0
-
-        Synopsis:
-                A Perl pipeline to analyze WGS Mycobacterium tuberculosis complex (MTBC) data.
-
-        Usage:
-          perl $0 [options] *.fasta | *.fastq | accessions_list.txt | accession1,accession2...
-          examples:
+	print <<HEREDOC;
+	
+	Name: 
+		$0
+	
+	Synopsis:
+		A Perl pipeline to analyze WGS Mycobacterium tuberculosis complex (MTBC) data.
+		
+	Usage:
+	  perl $0 [options] *.fasta | *.fastq | accessions_list.txt | accession1,accession2...
+	  examples: 
        perl simpiTB.pl <options> *.fasta
        perl simpiTB.pl <options> *.fastq
        perl simpiTB.pl <options> *.fastq.gz
-       perl simpiTB.pl <options> list.txt
+       perl simpiTB.pl <options> list.txt   
        (please note that the txt file must finish by extension ".txt", and it must contain one accession perl line such as the following example)
-       #SRR13015794
+       #SRR13015794 
        #SRR13015795
-       #accessions could also be separated by commas as follows:
+       #accessions could also be separated by commas as follows: 
        perl simpiTB.pl SRR13015794,SRR13015795,SRR13015796
-
-        General:
-                --help or -h                    displays this help
-                --version or -v                 displays the current version of the program
-
-        Options ([XXX] represents the expected value):
-                --out or -o [XXX]               allows to indicate the output repository containing generated files (default: $outdir)
-                --mykrobe or -mk                allows to use Mykrobe software to predict drug resistance profiles from sequencing reads
-                --tbprofiler or -tp             allows to use TBProfiler software to predict drug resistance profiles from sequencing reads
-                --resfinder or -rf              allows to use ResFinder tool to predict drug resistance from assembled genomes (FASTA)
-                --miru or -mi                   allows to use MIRUReader tool to predict 24-loci MIRU-VNTRs
-                --grape or -gr                  allows to use GrapeTree tool to infer a phylogeny from MIRU-VNTRs and Spoligotyping data
-                --roary or -ro                  allows to use Roary to perform a core gene alignment (pangenome analysis)
-                --fasttree or -ft               allows to use FastTree to perform a phylogenetic analysis from alignment file
-                --spades or -sp                 allows to use SPAdes for genome assembly (when input files are FASTQ sequence reads)
-                --sbpath or -sb [XXX]   allows to use SB numbers annotation collected from Mbovis.org database (an example file is provided in simpiTB repository)
-                --remove or -rm                 allows to remove supplementary output files/folders
-
+						 	
+	General:
+		--help or -h			displays this help 	
+		--version or -v			displays the current version of the program
+		
+	Options ([XXX] represents the expected value):
+		--out or -o [XXX]		allows to indicate the output repository containing generated files (default: $outdir)
+		--mykrobe or -mk		allows to use Mykrobe software to predict drug resistance profiles from sequencing reads
+		--tbprofiler or -tp		allows to use TBProfiler software to predict drug resistance profiles from sequencing reads
+		--resfinder or -rf		allows to use ResFinder tool to predict drug resistance from assembled genomes (FASTA)
+		--miru or -mi			allows to use MIRUReader tool to predict 24-loci MIRU-VNTRs
+		--grape or -gr			allows to use GrapeTree tool to infer a phylogeny from MIRU-VNTRs and Spoligotyping data
+		--roary or -ro			allows to use Roary to perform a core gene alignment (pangenome analysis)
+		--fasttree or -ft		allows to use FastTree to perform a phylogenetic analysis from alignment file
+		--spades or -sp			allows to use SPAdes for genome assembly (when input files are FASTQ sequence reads)
+		--sbpath or -sb [XXX]	allows to use SB numbers annotation collected from Mbovis.org database (an example file is provided in simpiTB repository)
+		--remove or -rm			allows to remove supplementary output files/folders
+		
 HEREDOC
 }
 #------------------------------------------------------------------------------
-# display program version
+# display program version 
 sub program_version {
-        my $programme = shift @_;
-        print "\n $programme, version : $version\n";
-        print "\n A Perl pipeline to analyze WGS Mycobacterium tuberculosis complex (MTBC) data. \n";
+	my $programme = shift @_;
+	print "\n $programme, version : $version\n";
+	print "\n A Perl pipeline to analyze WGS Mycobacterium tuberculosis complex (MTBC) data. \n";
 }
 #------------------------------------------------------------------------------
 sub resfinder_out {
-
+  
   my $seq = shift @_;
-  my @drugs = ('rifampicin', 'ethambutol', 'pyrazinamide', 'streptomycin', 'fluoroquinolone', 'amikacin', 'capreomycin', 'kanamycin', 'd-cycloserine', 'ethionamide', 'clofazimine', '
-para-aminosalicylic acid', 'delamanid', 'bedaquiline', 'linezolid');
+  my @drugs = ('rifampicin', 'ethambutol', 'pyrazinamide', 'streptomycin', 'fluoroquinolone', 'amikacin', 'capreomycin', 'kanamycin', 'd-cycloserine', 'ethionamide', 'clofazimine', 'para-aminosalicylic acid', 'delamanid', 'bedaquiline', 'linezolid');
   my $res = "";
   my $out = "RF/pheno_table.txt";
 
@@ -897,19 +930,19 @@ para-aminosalicylic acid', 'delamanid', 'bedaquiline', 'linezolid');
 
 # Test if Prog is installed
 sub isProgInstalled {
-
-        my $program = shift;
-        my @PATH=split(":","$ENV{'PATH'}");     #Get users Path
-        my $found = 0;
-        foreach my $path (@PATH)
-        {
-          if (-x "$path/$program")
-          {
-                  $found= 1;
-                  #last;
-          }
-        }
-
+ 
+	my $program = shift;
+ 	my @PATH=split(":","$ENV{'PATH'}");     #Get users Path
+	my $found = 0;
+	foreach my $path (@PATH) 
+	{
+   	  if (-x "$path/$program") 
+   	  {
+   		  $found= 1;
+   		  #last;
+    	  }
+	}
+	
     return $found;
 }
 
