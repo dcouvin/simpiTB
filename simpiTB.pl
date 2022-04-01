@@ -51,7 +51,7 @@ my $spades = 0;
 my $sbPath = "";
 my $outdir = "simpiTBResults";
 my $removeS = 0;
-my $pathToBin = "./bin/";
+my $pathToBin = ""; # "./bin/" replaced by ""
 my $useResFinder = 0;
 my %hReads = ();
 my %hRF = ();
@@ -180,8 +180,9 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     elsif ($ARGV[$i]=~/--resfinder/i or $ARGV[$i]=~/-rf/i) {
         $useResFinder = 1;
     }
-    
-   
+    elsif ($ARGV[$i]=~/--pathToBin/i or $ARGV[$i]=~/--path/i or $ARGV[$i]=~/-p/i) {
+        $pathToBin = $ARGV[$i+1];
+    }
 }
 
 if(-d "GFF/") { system("rm -rf GFF/");  }
