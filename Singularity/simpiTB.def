@@ -1,0 +1,75 @@
+Bootstrap: docker
+From: ubuntu:18.04
+
+%environment
+    export LISTEN_PORT=12345
+    export LC_ALL=C
+    export PATH=/opt/simpiTB:$PATH
+    export PATH=/opt/miniconda3/bin:$PATH
+
+%post
+apt-get update
+apt-get upgrade -y
+apt-get -y install tzdata
+apt-get -y install locales sudo make unzip bioperl
+apt-get -y install python3
+apt-get -y install python3-pip
+apt-get -y install git
+apt-get -y install ncbi-blast+
+apt-get -y install emboss
+apt-get -y install roary
+apt-get -y install fasttree curl wget
+apt-get -y install spades
+apt-get -y install libvcflib-tools libvcflib-dev
+
+pip3 install pandas
+pip3 install statistics
+pip3 install fast-lineage-caller
+cpan -f -i Bio::Perl
+
+cd /opt
+
+curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda3
+eval "$(/opt/miniconda3/bin/conda shell.bash hook)"
+
+export PATH=/opt/miniconda3/bin:$PATH # Change to match installation location, if not default.
+export PATH=/opt/conda/bin:$PATH
+
+conda upgrade -c defaults --override-channels conda
+conda config --add channels conda-forge
+conda config --add channels defaults
+conda config --add channels r
+conda config --add channels bioconda
+conda config --add channels biobuilds
+
+conda install -c bioconda tb-profiler=2.8.1
+conda install -c bioconda mykrobe
+conda create -n my_env_prokka python=3.9
+conda install -c biobuilds perl=5.2.2
+conda install -c bioconda prokka=1.14.6
+conda install -c conda-forge -c bioconda -c defaults snippy
+conda install -c bioconda grapetree
+conda install -c conda-forge tabulate
+conda install -c conda-forge biopython
+conda install -c bioconda cgecore
+conda install -c conda-forge gitpython
+conda install -c conda-forge python-dateutil
+
+git clone https://github.com/dcouvin/simpiTB.git
+cd simpiTB
+
+git clone https://github.com/dcouvin/SpolLineages.git
+git clone https://github.com/xiaeryu/SpoTyping.git SpoTyping-2.1
+git clone https://github.com/phglab/MIRUReader.git
+git clone https://git@bitbucket.org/genomicepidemiology/resfinder.git
+cd resfinder
+git clone https://git@bitbucket.org/genomicepidemiology/resfinder_db.git db_resfinder
+git clone https://git@bitbucket.org/genomicepidemiology/pointfinder_db.git db_pointfinder
+cd ..
+cd ..
+
+	
+%help
+    This is a Singularity container for simpiTB tool available at:
+    https://github.com/dcouvin/simpiTB
