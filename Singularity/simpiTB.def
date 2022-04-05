@@ -26,6 +26,7 @@ pip3 install pandas
 pip3 install statistics
 pip3 install fast-lineage-caller
 cpan -f -i Bio::Perl
+cpan -f -i Bio::Root::Version
 
 cd /opt
 
@@ -44,9 +45,6 @@ conda config --add channels bioconda
 
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
-conda create -n my_env_prokka python=3.9
-conda install -c conda-forge perl=5.26.2
-conda install -c bioconda prokka=1.14.6
 conda install -c conda-forge -c bioconda -c defaults snippy
 conda install -c bioconda grapetree
 conda install -c conda-forge tabulate
@@ -54,6 +52,7 @@ conda install -c conda-forge biopython
 conda install -c bioconda cgecore
 conda install -c conda-forge gitpython
 conda install -c conda-forge python-dateutil
+conda create -n prokka_env -c conda-forge -c bioconda prokka python=3.9
 
 git clone https://github.com/dcouvin/simpiTB.git
 cd simpiTB
