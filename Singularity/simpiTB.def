@@ -15,12 +15,12 @@ apt-get -y install locales sudo make unzip bioperl
 apt-get -y install python3
 apt-get -y install python3-pip
 apt-get -y install git
-apt-get -y install ncbi-blast+
 apt-get -y install emboss
 apt-get -y install roary
 apt-get -y install fasttree curl wget
 apt-get -y install spades
 apt-get -y install libvcflib-tools libvcflib-dev
+apt-get -y install libdatetime-perl libxml-simple-perl libdigest-md5-perl default-jre
 
 pip3 install pandas
 pip3 install statistics
@@ -43,6 +43,7 @@ conda config --add channels defaults
 conda config --add channels r
 conda config --add channels bioconda
 
+conda install -c bioconda blast=2.12.0
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
 conda install -c conda-forge -c bioconda -c defaults snippy
@@ -52,7 +53,12 @@ conda install -c conda-forge biopython
 conda install -c bioconda cgecore
 conda install -c conda-forge gitpython
 conda install -c conda-forge python-dateutil
-conda create -n prokka_env -c conda-forge -c bioconda prokka python=3.9
+
+git clone https://github.com/tseemann/prokka.git /opt/prokka
+/opt/prokka/bin/prokka --setupdb
+
+export PATH=/opt/prokka/bin/prokka:$PATH
+export PATH=/opt/prokka/bin:$PATH
 
 git clone https://github.com/dcouvin/simpiTB.git
 cd simpiTB
