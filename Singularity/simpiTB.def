@@ -41,12 +41,11 @@ conda config --add channels conda-forge
 conda config --add channels defaults
 conda config --add channels r
 conda config --add channels bioconda
-conda config --add channels biobuilds
 
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
 conda create -n my_env_prokka python=3.9
-conda install -c biobuilds perl=5.2.2
+conda install -c conda-forge perl=5.26.2
 conda install -c bioconda prokka=1.14.6
 conda install -c conda-forge -c bioconda -c defaults snippy
 conda install -c bioconda grapetree
