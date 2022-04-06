@@ -55,6 +55,7 @@ my $pathToBin = ""; # "./bin/" replaced by ""
 my $useResFinder = 0;
 my %hReads = ();
 my %hRF = ();
+my $genCode = 11;
 
 my $version = "1.0.1";
 
@@ -278,7 +279,7 @@ foreach my $seq (@tabFiles){
           $nameSeq =~  s/.fna//ig;
 	  
 	  #my $prokkaCmd = "prokka --force --outdir prokka --prefix result $seq";
-          my $prokkaCmd = "prodigal -i $seq -c -m -f gff -o my_gff ";
+          my $prokkaCmd = "prodigal -i $seq -c -m -g $genCode -f gff -o my_gff ";
 	  system($prokkaCmd);
           my $gff = "my_gff";
 	  system(" echo '##FASTA' >> $gff && cat $gff $seq > ${nameSeq}.gff ");
