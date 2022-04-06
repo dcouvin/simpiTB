@@ -27,8 +27,15 @@ apt-get -y install libvcflib-tools libvcflib-dev
 pip3 install pandas
 pip3 install statistics
 pip3 install fast-lineage-caller
+cpan -f -i Bio::SeqIO
 
 cd /opt
+
+wget https://github.com/samtools/samtools/releases/download/1.9/samtools-1.9.tar.bz2
+tar -vxjf samtools-1.9.tar.bz2
+cd samtools-1.9
+make
+cd ..
 
 curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash ./Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda3
@@ -45,13 +52,15 @@ conda config --add channels bioconda
 
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
-conda install -c conda-forge -c bioconda -c defaults snippy=4.3.6
 conda install -c bioconda grapetree
 conda install -c conda-forge tabulate
 conda install -c conda-forge biopython
 conda install -c bioconda cgecore
 conda install -c conda-forge gitpython
 conda install -c conda-forge python-dateutil
+
+git clone https://github.com/tseemann/snippy.git 
+export PATH=/opt/snippy/bin/snippy:$PATH 
 
 git clone https://github.com/dcouvin/simpiTB.git
 cd simpiTB
