@@ -66,17 +66,33 @@ print "##################################################################\n";
 
 print "\n";
 
-my $mykrobeProg = isProgInstalled("mykrobe");
-if($mykrobeProg){
-  print "mykrobe is...............OK \n";
+my $spadesProg = isProgInstalled("spades");
+if($spadesProg){
+  print "spades is...............OK \n";
+}
+my $prodigalProg = isProgInstalled("prodigal");
+if($prodigalProg){
+  print "prodigal is...............OK \n";
 }
 my $tbprofilerProg = isProgInstalled("tb-profiler");
 if($tbprofilerProg){
   print "tb-profiler is...............OK \n";
 }
-my $spadesProg = isProgInstalled("spades");
-if($spadesProg){
-  print "spades is...............OK \n";
+my $roaryProg = isProgInstalled("roary");
+if($roaryProg){
+  print "roary is...............OK \n";
+}
+my $fasttreeProg = isProgInstalled("fasttree");
+if($fasttreeProg){
+  print "fasttree is...............OK \n";
+}
+my $grapetreeProg = isProgInstalled("grapetree");
+if($grapetreeProg){
+  print "grapetree is...............OK \n";
+}
+my $flcProg = isProgInstalled("fast-lineage-caller");
+if($flcProg){
+  print "fast-lineage-caller is...............OK \n";
 }
 
 print "\n";
@@ -189,6 +205,19 @@ if(-d "GFF/") { system("rm -rf GFF/");  }
 if(-d $outdir) { system("rm -rf $outdir");  }
 mkdir($outdir);
 
+    if(-e "${pathToBin}/SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py"){
+      print "spotyping is...............OK \n";
+    }
+    if(-e "${pathToBin}/MIRUReader/MIRUReader.py"){
+      print "mirureader is...............OK \n";
+    }
+    if(-e "${pathToBin}/resfinder/run_resfinder.py"){
+      print "resfinder is...............OK \n";
+    }
+    if(-e "${pathToBin}/SpolLineages/spollineages.jar"){
+      print "spollineages is...............OK \n";
+    }
+    
 foreach my $seq (@tabFiles){
 
     my $seqFolder = "spades".$seq;
