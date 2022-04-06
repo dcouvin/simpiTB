@@ -243,16 +243,19 @@ foreach my $seq (@tabFiles){
           #}
         }
         if($useRoary){
-          my $prokkaCmd = "prokka --force --outdir prokka --prefix result $seq";
-          system($prokkaCmd);
-          my $gff = "prokka/result.gff";
-          if(! -d "GFF/") { mkdir("GFF/");  }
           my $nameSeq = $seq;
           $nameSeq =~  s/\//_/ig;
           $nameSeq =~  s/.fasta//ig;
           $nameSeq =~  s/.fna//ig;
-          
-          system("mv $gff GFF/${nameSeq}.gff");
+	  
+	  #my $prokkaCmd = "prokka --force --outdir prokka --prefix result $seq";
+          my $prokkaCmd = "prodigal -i $seq -c -m -f gff -o my_gff ";
+	  system($prokkaCmd);
+          my $gff = "my_gff";
+	  system(" echo '##FASTA' >> $gff && cat $gff $seq > ${nameSeq}.gff ");
+          if(! -d "GFF/") { mkdir("GFF/");  }
+         
+          if(-e "${nameSeq}.gff" and -d "GFF/") { system("mv ${nameSeq}.gff GFF/ "); }
           
         }
 
