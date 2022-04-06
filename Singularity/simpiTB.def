@@ -45,7 +45,7 @@ conda config --add channels bioconda
 
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
-conda install -c conda-forge -c bioconda -c defaults snippy=4.6.0
+conda install -c conda-forge -c bioconda -c defaults snippy=4.3.6
 conda install -c bioconda grapetree
 conda install -c conda-forge tabulate
 conda install -c conda-forge biopython
