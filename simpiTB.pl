@@ -830,7 +830,15 @@ if($useRoary and -d "GFF/"){
     #if (-e "cg_dnaDist.mat" and -e "fastme_tree.nwk") { system ("mv cg_dnaDist.mat fastme_tree.nwk $outdir"); }
   }
 }
-
+#remove or move files generated and used by roary
+if($removeS){
+  system("rm -rf roary");
+  system("rm -rf GFF/");
+}
+else{
+  system("mv roary $outdir");
+  system("mv GFF/ $outdir");
+}
 # Remove TBP repository
 #if(-d $resultTBprof){
 #  system("rm -rf $resultTBprof");
