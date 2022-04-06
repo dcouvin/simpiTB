@@ -16,7 +16,9 @@ apt-get -y install python3
 apt-get -y install python3-pip
 apt-get -y install git
 apt-get -y install emboss
-apt-get -y install roary prodigal
+apt-get -y install ncbi-blast+
+apt-get -y install roary
+apt-get -y install prodigal
 apt-get -y install fasttree curl wget
 apt-get -y install spades
 apt-get -y install libvcflib-tools libvcflib-dev
@@ -40,7 +42,6 @@ conda config --add channels defaults
 conda config --add channels r
 conda config --add channels bioconda
 
-conda install -c bioconda blast=2.12.0
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
 conda install -c conda-forge -c bioconda -c defaults snippy
