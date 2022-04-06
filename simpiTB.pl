@@ -808,12 +808,13 @@ close (RECAP) or die "close file error : $!";
 
 
 if($useRoary and -d "GFF/"){
+  if(-d "roary") { system("rm -rf roary"); }
   my $roaryCmd = "roary -e --mafft -p 16 -g 100000 -f roary -v GFF/*.gff -cd 95 -r ";
   system($roaryCmd);
 
   #dnaDist & fastme / fasttree
   my $coreAln = "roary/core_gene_alignment.aln";
-  if (-e $coreAln) { system ("mv $coreAln $outdir"); }
+  if (-e $coreAln) { system ("cp $coreAln $outdir"); }
   
   if($fasttree){
     my $fasttreeCmd = "fasttree -nt -gtr < $coreAln > fasttree.nwk";
