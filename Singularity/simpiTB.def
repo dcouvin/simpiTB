@@ -28,6 +28,7 @@ pip3 install pandas
 pip3 install statistics
 pip3 install fast-lineage-caller
 cpan -f -i Bio::SeqIO
+cpan -f -i Bio::Perl
 
 cd /opt
 
