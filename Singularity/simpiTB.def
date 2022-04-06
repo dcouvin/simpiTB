@@ -16,18 +16,14 @@ apt-get -y install python3
 apt-get -y install python3-pip
 apt-get -y install git
 apt-get -y install emboss
-apt-get -y install roary
+apt-get -y install roary prodigal
 apt-get -y install fasttree curl wget
 apt-get -y install spades
 apt-get -y install libvcflib-tools libvcflib-dev
-apt-get -y install libdatetime-perl libxml-simple-perl libdigest-md5-perl default-jre
 
 pip3 install pandas
 pip3 install statistics
 pip3 install fast-lineage-caller
-cpan -f -i Bio::Perl
-cpan -f -i Bio::Root::Version
-cpan -f -i XML::Simple
 
 cd /opt
 
@@ -54,12 +50,6 @@ conda install -c conda-forge biopython
 conda install -c bioconda cgecore
 conda install -c conda-forge gitpython
 conda install -c conda-forge python-dateutil
-
-git clone https://github.com/tseemann/prokka.git /opt/prokka
-/opt/prokka/bin/prokka --setupdb
-
-export PATH=/opt/prokka/bin/prokka:$PATH
-export PATH=/opt/prokka/bin:$PATH
 
 git clone https://github.com/dcouvin/simpiTB.git
 cd simpiTB
