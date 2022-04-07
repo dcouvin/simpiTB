@@ -113,7 +113,4 @@ then
  conda install -c bioconda cgecore
  conda install -c conda-forge gitpython
  conda install -c conda-forge python-dateutil
-
- #or conda create --name py3 -c bioconda python=3.7 tb-profiler mykrobe
-
-fi 
+fi
