@@ -7,5 +7,6 @@ Use the following command to build the Singularity image from this current repos
 
 or 
 
-`sudo singularity config fakeroot --add <user>
-singularity build -f simpiTB.simg Singularity/simpiTB.def`
+`sudo singularity config fakeroot --add <user>`
+
+`singularity build -f simpiTB.simg Singularity/simpiTB.def`
