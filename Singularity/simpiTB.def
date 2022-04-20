@@ -24,6 +24,7 @@ apt-get -y install prodigal
 apt-get -y install fasttree curl wget
 apt-get -y install spades
 apt-get -y install libvcflib-tools libvcflib-dev
+apt-get -y install harvest-tools
 
 pip3 install pandas
 pip3 install statistics
@@ -55,6 +56,7 @@ conda config --add channels bioconda
 conda install -c bioconda tb-profiler=2.8.1
 conda install -c bioconda mykrobe
 conda install -c bioconda grapetree
+conda install -c bioconda parsnp
 conda install -c conda-forge tabulate
 conda install -c conda-forge biopython
 conda install -c bioconda cgecore
