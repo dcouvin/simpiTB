@@ -24,13 +24,13 @@ sudo apt-get -y install python2 >> $LOGFILE
 sudo apt-get -y install python3 >> $LOGFILE
 sudo apt-get -y install python3-pip >> $LOGFILE
 
-# git, blast, emboss, pandas, roary, fast-lineage-caller, fasttree, curl, wget,
+# git, blast, emboss, pandas, roary, fast-lineage-caller, fasttree, curl, wget, harvest-tools
 sudo apt-get -y install git >> $LOGFILE
 sudo apt-get -y install ncbi-blast+ >> $LOGFILE
 sudo apt-get -y install emboss >> $LOGFILE
 sudo apt-get -y install roary >> $LOGFILE
 sudo apt-get -y install prodigal >> $LOGFILE
-#sudo apt-get -y install samtools >> $LOGFILE
+sudo apt-get -y install harvest-tools >> $LOGFILE
 sudo apt-get -y install fasttree curl wget >> $LOGFILE
 pip3 install pandas >> $LOGFILE
 pip3 install statistics >> $LOGFILE
@@ -108,6 +108,7 @@ then
  conda install -c bioconda tb-profiler=2.8.1
  conda install -c bioconda mykrobe
  conda install -c bioconda grapetree
+ conda install -c bioconda parsnp
  conda install -c conda-forge tabulate
  conda install -c conda-forge biopython
  conda install -c bioconda cgecore
