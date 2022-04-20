@@ -32,6 +32,9 @@ sudo apt-get -y install roary >> $LOGFILE
 sudo apt-get -y install prodigal >> $LOGFILE
 sudo apt-get -y install harvest-tools >> $LOGFILE
 sudo apt-get -y install fasttree curl wget >> $LOGFILE
+sudo apt-get -y install vcftools >> $LOGFILE
+sudo apt-get -y install bcftools >> $LOGFILE
+sudo apt-get -y install parsnp >> $LOGFILE
 pip3 install pandas >> $LOGFILE
 pip3 install statistics >> $LOGFILE
 pip3 install fast-lineage-caller >> $LOGFILE
@@ -108,7 +111,7 @@ then
  conda install -c bioconda tb-profiler=2.8.1
  conda install -c bioconda mykrobe
  conda install -c bioconda grapetree
- conda install -c bioconda parsnp
+ #conda install -c bioconda parsnp
  conda install -c conda-forge tabulate
  conda install -c conda-forge biopython
  conda install -c bioconda cgecore
