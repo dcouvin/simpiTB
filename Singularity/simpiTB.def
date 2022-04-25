@@ -9,7 +9,6 @@ From: ubuntu:18.04
 
 %post
 chmod 755 .
-chmod 755 *
 apt-get update --fix-missing
 apt-get upgrade -y
 apt-get -y install tzdata
