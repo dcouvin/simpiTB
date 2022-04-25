@@ -18,6 +18,7 @@ my $seqfasta = "";
 my $seqfastq = "";
 my $recap_total_seq = "reconciledTB_list.xls"; # global summary file
 my $spollineages_entries = "spollineages.csv"; # input file for spollineages
+my $phyloviz_entries = "phyloviz_profiles.tab"; # input file for phyloviz
 my $grapetree_entries = "grapetree.tab"; # input file for grapetree
 my %hSPOL = (); # hash map for all Spol sequences
 my %hSPOLoctal = ();
@@ -56,6 +57,8 @@ my $useResFinder = 0;
 my %hReads = ();
 my %hRF = ();
 my $genCode = 11;
+my %hGrape = ();
+my %cladeInfo = ();
 
 my $version = "1.0.1";
 
@@ -707,12 +710,12 @@ print RECAP "#ID\tSpoligotype (SpoTyping)\tSpoligo (octal)\t24-loci MIRU-VNTR\t1
 open (LINE,'>', $spollineages_entries) or die "could not open $!";
 
 if($useGrape){
-open (GRAPE,'>', $grapetree_entries) or die "could not open $!";
+open (PHYLO,'>', $phyloviz_entries) or die "could not open $!";
 if($doMiru){
-  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\tGene_44\tGene_45\tGene_46\tGene_47\tGene_48\tGene_49\tGene_50\tGene_51\tGene_52\tGene_53\tGene_54\tGene_55\tGene_56\tGene_57\tGene_58\tGene_59\tGene_60\tGene_61\tGene_62\tGene_63\tGene_64\tGene_65\tGene_66\tGene_67\n";
+  print PHYLO "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\tGene_44\tGene_45\tGene_46\tGene_47\tGene_48\tGene_49\tGene_50\tGene_51\tGene_52\tGene_53\tGene_54\tGene_55\tGene_56\tGene_57\tGene_58\tGene_59\tGene_60\tGene_61\tGene_62\tGene_63\tGene_64\tGene_65\tGene_66\tGene_67\n";
 }
 else{
-  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\n";
+  print PHYLO "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\n";
 }
 
 #my $count = 0;
@@ -730,6 +733,7 @@ foreach my $key (@tabFiles)
 
     my @miru24 = split (//, $hMIRU{$key}) ;
     my $miruString = join( "\t", @miru24 );
+    
     $miruString =~  s/A/10/ig;
     $miruString =~  s/B/11/ig;
     $miruString =~  s/C/12/ig;
@@ -740,16 +744,20 @@ foreach my $key (@tabFiles)
     my @tabKey = split (/\./, $key) ;
     #my $id = $count++; # $tabKey[0]
 	if($doMiru){
-      print GRAPE "$tabKey[0]\t$spolString\t$miruString\n";
+          print PHYLO "$tabKey[0]\t$spolString\t$miruString\n";
+	  my $spoligomiru = $tabSpo[0].$hMIRU{$key};
+	  $hGrape{$spoligomiru} .= $tabKey[0]."|"
 	}
 	else{
-	  print GRAPE "$tabKey[0]\t$spolString\n";
+	  print PHYLO "$tabKey[0]\t$spolString\n";
+	  my $spoligo = $tabSpo[0];
+	  $hGrape{$spoligo} .= $tabKey[0]."|"
 	}
   }
   
 }
 
-if($useGrape){ close (GRAPE) or die "close file error : $!"; }
+if($useGrape){ close (PHYLO) or die "close file error : $!"; }
 close (LINE) or die "close file error : $!";  
 
 
@@ -762,7 +770,11 @@ system($spollineages_Cmd);
         chomp();
         if ($_ !~  m/^StrainID/) {
           my @tabRes = split (/;/, $_) ;
-          $spollineages{$tabRes[0]} = "$tabRes[5]\t$tabRes[12]";
+          $spollineages{$tabRes[0]} = "$tabRes[4]"."/"."$tabRes[5]\t$tabRes[12]";
+	  my $currentSpol = $tabRes[1];
+	  $currentSpol =~  s/n/1/ig;
+	  $currentSpol =~  s/o/0/ig;
+	  $cladeInfo{$currentSpol} = "$tabRes[4]"."/"."$tabRes[5] | SIT$tabRes[12]";
         }
       }
       close (RESLINE) or die "close file error : $!"; 
@@ -771,15 +783,50 @@ if(-e $spollineages_entries and -e "outputSL.csv") {
   system("mv $spollineages_entries outputSL.csv $outdir");
 }
 
-if($useGrape and -e $grapetree_entries){
+#removed "and -e $grapetree_entries" in condition
+if($useGrape){
+#prepare entry-file
+open (GRAPE,'>', $grapetree_entries) or die "could not open $!";
+if($doMiru){
+  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\tGene_44\tGene_45\tGene_46\tGene_47\tGene_48\tGene_49\tGene_50\tGene_51\tGene_52\tGene_53\tGene_54\tGene_55\tGene_56\tGene_57\tGene_58\tGene_59\tGene_60\tGene_61\tGene_62\tGene_63\tGene_64\tGene_65\tGene_66\tGene_67\n";
+}
+else{
+  print GRAPE "#Strain\tGene_1\tGene_2\tGene_3\tGene_4\tGene_5\tGene_6\tGene_7\tGene_8\tGene_9\tGene_10\tGene_11\tGene_12\tGene_13\tGene_14\tGene_15\tGene_16\tGene_17\tGene_18\tGene_19\tGene_20\tGene_21\tGene_22\tGene_23\tGene_24\tGene_25\tGene_26\tGene_27\tGene_28\tGene_29\tGene_30\tGene_31\tGene_32\tGene_33\tGene_34\tGene_35\tGene_36\tGene_37\tGene_38\tGene_39\tGene_40\tGene_41\tGene_42\tGene_43\n";
+}
+
+foreach my $gkey (keys %hGrape){
+ my $firstSpol_char = "";
+
+ my @string_2 = split (//, $gkey) ;
+ my $profiles_2 = join( "\t", @string_2 ); 
+  
+  if($doMiru){
+    $firstSpol_char = substr($gkey, 0, 43); # 'first 43 chars correspond to spoligo'
+    $gkey =~  s/A/10/ig;
+    $gkey =~  s/B/11/ig;
+    $gkey =~  s/C/12/ig;
+    $gkey =~  s/D/13/ig;
+    $gkey =~  s/E/14/ig;
+    $gkey =~  s/F/15/ig; 
+    
+    print GRAPE "$hGrape{$gkey}".$cladeInfo{$firstSpol_char}."\t$profiles_2\n";
+  }
+  else{
+    print GRAPE "$hGrape{$gkey}".$cladeInfo{$gkey}."\t$profiles_2\n";
+  }
+  
+}
+close (GRAPE) or die "close file error : $!"; 
 
 #GrapeTree
+if(-e $grapetree_entries) { 
 my $grape_Cmd = "grapetree -p $grapetree_entries -m NJ > grapetreeNJ.nwk";
 my $tabSize = @tabFiles;
 if($tabSize >= 4){   # the NJ tree file will be generated only if $tabSize is >= 4
   system ($grape_Cmd);
 }
 system("mv $grapetree_entries $outdir");
+}
 
 if(-e "grapetreeNJ.nwk") { 
   system("mv grapetreeNJ.nwk $outdir"); 
