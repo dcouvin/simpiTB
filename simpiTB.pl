@@ -20,6 +20,7 @@ my $recap_total_seq = "reconciledTB_list.xls"; # global summary file
 my $spollineages_entries = "spollineages.csv"; # input file for spollineages
 my $phyloviz_entries = "phyloviz_profiles.tab"; # input file for phyloviz
 my $grapetree_entries = "grapetree.tab"; # input file for grapetree
+my $grapeMethod = "RapidNJ"; # value for -m option in grapetree
 my %hSPOL = (); # hash map for all Spol sequences
 my %hSPOLoctal = ();
 my %hMIRU = (); # hash for 24-loci MIRU-VNTRs
@@ -178,6 +179,9 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     }
     elsif ($ARGV[$i]=~/--grape/i or $ARGV[$i]=~/-gr/i) {
         $useGrape = 1;
+    }
+    elsif ($ARGV[$i]=~/--method/i or $ARGV[$i]=~/-me/i) {
+        $grapeMethod = $ARGV[$i+1];
     }
     elsif ($ARGV[$i]=~/--roary/i or $ARGV[$i]=~/-ro/i) {
         $useRoary = 1;
@@ -820,7 +824,7 @@ close (GRAPE) or die "close file error : $!";
 
 #GrapeTree
 if(-e $grapetree_entries and -e $phyloviz_entries) { 
-my $grape_Cmd = "grapetree -p $grapetree_entries -m NJ > grapetreeNJ.nwk";
+my $grape_Cmd = "grapetree -p $grapetree_entries -m $grapeMethod > grapetreeNJ.nwk";
 my $tabSize = @tabFiles;
 if($tabSize >= 4){   # the NJ tree file will be generated only if $tabSize is >= 4
   system ($grape_Cmd);
@@ -988,6 +992,7 @@ sub help_user_advance {
 		--resfinder or -rf		allows to use ResFinder tool to predict drug resistance from assembled genomes (FASTA)
 		--miru or -mi			allows to use MIRUReader tool to predict 24-loci MIRU-VNTRs
 		--grape or -gr			allows to use GrapeTree tool to infer a phylogeny from MIRU-VNTRs and Spoligotyping data
+		--method or -me			allows to use GrapeTree's method to reconstruct the phylogeny (-m option value: NJ, MSTreeV2, RapidNJ ...)
 		--roary or -ro			allows to use Roary to perform a core gene alignment (pangenome analysis)
 		--fasttree or -ft		allows to use FastTree to perform a phylogenetic analysis from alignment file
 		--spades or -sp			allows to use SPAdes for genome assembly (when input files are FASTQ sequence reads)
