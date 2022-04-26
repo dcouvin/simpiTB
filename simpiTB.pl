@@ -819,12 +819,13 @@ foreach my $gkey (keys %hGrape){
 close (GRAPE) or die "close file error : $!"; 
 
 #GrapeTree
-if(-e $grapetree_entries) { 
+if(-e $grapetree_entries and -e $phyloviz_entries) { 
 my $grape_Cmd = "grapetree -p $grapetree_entries -m NJ > grapetreeNJ.nwk";
 my $tabSize = @tabFiles;
 if($tabSize >= 4){   # the NJ tree file will be generated only if $tabSize is >= 4
   system ($grape_Cmd);
 }
+system("mv $phyloviz_entries $outdir");
 system("mv $grapetree_entries $outdir");
 }
 
@@ -884,8 +885,10 @@ if($removeS){
   system("rm -rf GFF/");
 }
 else{
-  system("mv roary $outdir");
-  system("mv GFF/ $outdir");
+  if($useRoary and -d "GFF/"){
+    system("mv roary $outdir");
+    system("mv GFF/ $outdir");
+  }
 }
 # Remove TBP repository
 #if(-d $resultTBprof){
