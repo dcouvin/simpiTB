@@ -746,12 +746,12 @@ foreach my $key (@tabFiles)
 	if($doMiru){
           print PHYLO "$tabKey[0]\t$spolString\t$miruString\n";
 	  my $spoligomiru = $tabSpo[0].$hMIRU{$key};
-	  $hGrape{$spoligomiru} .= $tabKey[0]."|"
+	  $hGrape{$spoligomiru} .= $tabKey[0]."|";
 	}
 	else{
 	  print PHYLO "$tabKey[0]\t$spolString\n";
 	  my $spoligo = $tabSpo[0];
-	  $hGrape{$spoligo} .= $tabKey[0]."|"
+	  $hGrape{$spoligo} .= $tabKey[0]."|";
 	}
   }
   
@@ -774,7 +774,7 @@ system($spollineages_Cmd);
 	  my $currentSpol = $tabRes[1];
 	  $currentSpol =~  s/n/1/ig;
 	  $currentSpol =~  s/o/0/ig;
-	  $cladeInfo{$currentSpol} = "$tabRes[4]"."/"."$tabRes[5] | SIT$tabRes[12]";
+	  $cladeInfo{$currentSpol} = "$tabRes[4]"."/"."$tabRes[5]_SIT$tabRes[12]";
         }
       }
       close (RESLINE) or die "close file error : $!"; 
