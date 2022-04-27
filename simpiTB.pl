@@ -51,6 +51,7 @@ my $useRoary = 0;
 my $fasttree = 0;
 my $spades = 0;
 my $sbPath = "";
+my $fastaDir = "FASTAsimpi";
 my $outdir = "simpiTBResults";
 my $removeS = 0;
 my $pathToBin = ""; # "./bin/" replaced by ""
@@ -60,6 +61,9 @@ my %hRF = ();
 my $genCode = 11;
 my %hGrape = ();
 my %cladeInfo = ();
+my $cpus = 16; #CPUs to be used for programs
+my $useParsnp = 0; # option to use Parsnp
+my $reference = ""; # reference sequence (in FASTA format) to be used
 
 my $version = "1.0.1";
 
@@ -82,6 +86,10 @@ if($prodigalProg){
 my $tbprofilerProg = isProgInstalled("tb-profiler");
 if($tbprofilerProg){
   print "tb-profiler is...............OK \n";
+}
+my $parsnpProg = isProgInstalled("parsnp");
+if($parsnpProg){
+  print "parsnp is...............OK \n";
 }
 my $roaryProg = isProgInstalled("roary");
 if($roaryProg){
@@ -121,6 +129,13 @@ if ($ARGV[0] eq "--version" || $ARGV[0] eq "-v") {
 if(@ARGV){
   for my $arg (@ARGV){
     if ($arg =~ m/.fasta/ or $arg =~ m/.fna/ ){  # or $arg =~ m/.fasta.gz/ or $arg =~ m/.fna.gz/
+        my $tmp_arg = "";
+        if($arg =~ m/.fna/){
+	  $tmp_arg = $arg;
+	  $tmp_arg =~ s/.fna/.fasta/g;
+	  system (mv -f $arg $tmp_arg);
+	  $arg = $tmp_arg;
+	}
         print "FASTA file: $arg\n";
         #$seqfasta = $arg;
 
@@ -204,6 +219,15 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
     elsif ($ARGV[$i]=~/--resfinder/i or $ARGV[$i]=~/-rf/i) {
         $useResFinder = 1;
     }
+    elsif ($ARGV[$i]=~/--reference/i or $ARGV[$i]=~/-ref/i) {
+        $reference = $ARGV[$i+1];
+    }
+    elsif ($ARGV[$i]=~/--cpu/i or $ARGV[$i]=~/-cpu/i) {
+        $cpus = $ARGV[$i+1];
+    }
+    elsif ($ARGV[$i]=~/--parsnp/i or $ARGV[$i]=~/-snp/i) {
+        $useParsnp = 1;
+    }
     elsif ($ARGV[$i]=~/--pathToBin/i or $ARGV[$i]=~/--path/i or $ARGV[$i]=~/-p/i) {
         $pathToBin = $ARGV[$i+1];
     }
@@ -212,6 +236,8 @@ for (my $i = 0; $i <= $#ARGV; $i++) {
 if(-d "GFF/") { system("rm -rf GFF/");  }
 if(-d $outdir) { system("rm -rf $outdir");  }
 mkdir($outdir);
+if(-d $fastaDir) { system("rm -rf $fastaDir");  }
+mkdir($fastaDir);
 
     if(-e "${pathToBin}/SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py"){
       print "spotyping is...............OK \n";
@@ -250,6 +276,7 @@ foreach my $seq (@tabFiles){
     #RF/pheno_table.txt
 
     if(-e $seq and $isFasta){
+        system (cp -f $seq $fastaDir); # copy original file into FASTA folder #parsnp –p $cpus –d $fastaDir –r $reference -c
         $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py --noQuery -o spotyping --seq $seq ";
         #open GALRU, "galru $seq -t 16 |";
         if ($doMiru) { 
@@ -362,7 +389,7 @@ foreach my $seq (@tabFiles){
           $hLineageMyk{$seq} = "NA";
         }
 
-        $tbProfilerCmd = $tbProfilerCmd." -1 ".$seq." -p ".$seq." -t 16 -d ".$tbProf;
+        $tbProfilerCmd = $tbProfilerCmd." -1 ".$seq." -p ".$seq." -t $cpus -d ".$tbProf;
     }
     elsif($isList){
       my $read1 = $seq."_1.fastq.gz";
@@ -825,7 +852,7 @@ close (GRAPE) or die "close file error : $!";
 
 #GrapeTree
 if(-e $grapetree_entries and -e $phyloviz_entries) { 
-my $grape_Cmd = "grapetree -p $grapetree_entries -m $grapeMethod > grapetreeNJ.nwk";
+my $grape_Cmd = "grapetree -p $grapetree_entries -m $grapeMethod -n $cpus > grapetreeNJ.nwk";
 my $tabSize = @tabFiles;
 if($tabSize >= 4){   # the NJ tree file will be generated only if $tabSize is >= 4
   system ($grape_Cmd);
@@ -863,7 +890,7 @@ close (RECAP) or die "close file error : $!";
 
 if($useRoary and -d "GFF/"){
   if(-d "roary") { system("rm -rf roary"); }
-  my $roaryCmd = "roary -e --mafft -p 16 -g 100000 -f roary -v GFF/*.gff -cd 95 -r ";
+  my $roaryCmd = "roary -e --mafft -p $cpus -g 100000 -f roary -v GFF/*.gff -cd 95 -r ";
   system($roaryCmd);
 
   #dnaDist & fastme / fasttree
@@ -895,6 +922,12 @@ else{
     system("mv GFF/ $outdir");
   }
 }
+
+#useParsnp
+if($useParsnp and -d $fastaDir){
+  system ("parsnp –p $cpus –d $fastaDir –r $reference -c -o $outdir");
+}
+
 # Remove TBP repository
 #if(-d $resultTBprof){
 #  system("rm -rf $resultTBprof");
