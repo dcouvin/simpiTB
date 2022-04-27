@@ -235,7 +235,7 @@ foreach my $seq (@tabFiles){
         #$seqFolder =~ $tabSeq[0];
         $seqFolder =~ s/.fastq.gz//g;
         $seqFolder =~ s/.fastq//g;
-       print "SEQFOLDER IS : $seqFolder \n";
+       #print "SEQFOLDER IS : $seqFolder \n";
     }
 
     #check paired reads and consider as list
@@ -779,6 +779,7 @@ system($spollineages_Cmd);
 	  $currentSpol =~  s/n/1/ig;
 	  $currentSpol =~  s/o/0/ig;
 	  $cladeInfo{$currentSpol} = "$tabRes[4]"."/"."$tabRes[5]_SIT$tabRes[12]";
+	  $cladeInfo{$currentSpol} =~ s/SITOrphan/Orph/g;
         }
       }
       close (RESLINE) or die "close file error : $!"; 
