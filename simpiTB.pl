@@ -925,7 +925,7 @@ else{
 
 #useParsnp
 if($useParsnp and -d $fastaDir){
-  system ("parsnp –p $cpus –d $fastaDir –r $reference -c -o $outdir");
+  system ("parsnp –r $reference –d $fastaDir –p $cpus -c -o $outdir");
 }
 
 # Remove TBP repository
