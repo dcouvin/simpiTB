@@ -133,7 +133,7 @@ if(@ARGV){
         if($arg =~ m/.fna/){
 	  $tmp_arg = $arg;
 	  $tmp_arg =~ s/.fna/.fasta/g;
-	  system (mv -f $arg $tmp_arg);
+	  system ("mv -f $arg $tmp_arg");
 	  $arg = $tmp_arg;
 	}
         print "FASTA file: $arg\n";
@@ -276,7 +276,7 @@ foreach my $seq (@tabFiles){
     #RF/pheno_table.txt
 
     if(-e $seq and $isFasta){
-        system (cp -f $seq $fastaDir); # copy original file into FASTA folder #parsnp –p $cpus –d $fastaDir –r $reference -c
+        system ("cp -f $seq $fastaDir"); # copy original file into FASTA folder #parsnp –p $cpus –d $fastaDir –r $reference -c
         $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py --noQuery -o spotyping --seq $seq ";
         #open GALRU, "galru $seq -t 16 |";
         if ($doMiru) { 
