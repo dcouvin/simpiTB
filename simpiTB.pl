@@ -925,7 +925,8 @@ else{
 
 #useParsnp
 if($useParsnp and -d $fastaDir){
-  system ("parsnp –r $reference –d $fastaDir –p $cpus -c -o $outdir");
+  system ("chmod +x $fastaDir ");
+  system ("parsnp –r $reference –d $fastaDir –p $cpus -o $outdir -c");
   system ("parsnp –r $reference –d $fastaDir –p $cpus -o ${outdir}/simpleParsnp");
 }
 
