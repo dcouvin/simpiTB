@@ -108,7 +108,7 @@ then
  conda config --add channels r
  conda config --add channels bioconda
 
- conda install -c bioconda tb-profiler=2.8.1
+ conda install -c bioconda tb-profiler=4.4.2
  conda install -c bioconda mykrobe
  conda install -c bioconda grapetree
  #conda install -c bioconda parsnp
