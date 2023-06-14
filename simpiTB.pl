@@ -54,7 +54,7 @@ my $sbPath = "";
 my $fastaDir = "FASTAsimpi";
 my $outdir = "simpiTBResults";
 my $removeS = 0;
-my $pathToBin = ""; # "./bin/" replaced by ""
+my $pathToBin = "."; # "./bin/" replaced by ""
 my $useResFinder = 0;
 my %hReads = ();
 my %hRF = ();
@@ -65,7 +65,7 @@ my $cpus = 16; #CPUs to be used for programs
 my $useParsnp = 0; # option to use Parsnp
 my $reference = ""; # reference sequence (in FASTA format) to be used
 
-my $version = "1.0.1";
+my $version = "1.0.2";
 
 my $start = time();
 
@@ -75,29 +75,33 @@ print "##################################################################\n";
 
 print "\n";
 
-my $spadesProg = isProgInstalled("spades");
-if($spadesProg){
-  print "spades is...............OK \n";
-}
-my $prodigalProg = isProgInstalled("prodigal");
-if($prodigalProg){
-  print "prodigal is...............OK \n";
-}
+#my $spadesProg = isProgInstalled("spades");
+#if($spadesProg){
+ # print "spades is...............OK \n";
+#}
+#my $prodigalProg = isProgInstalled("prodigal");
+#if($prodigalProg){
+ # print "prodigal is...............OK \n";
+#}
 my $tbprofilerProg = isProgInstalled("tb-profiler");
 if($tbprofilerProg){
   print "tb-profiler is...............OK \n";
 }
-my $parsnpProg = isProgInstalled("parsnp");
-if($parsnpProg){
-  print "parsnp is...............OK \n";
-}
-my $roaryProg = isProgInstalled("roary");
-if($roaryProg){
-  print "roary is...............OK \n";
-}
-my $fasttreeProg = isProgInstalled("fasttree");
-if($fasttreeProg){
-  print "fasttree is...............OK \n";
+#my $parsnpProg = isProgInstalled("parsnp");
+#if($parsnpProg){
+ # print "parsnp is...............OK \n";
+#}
+#my $roaryProg = isProgInstalled("roary");
+#if($roaryProg){
+ # print "roary is...............OK \n";
+#}
+#my $fasttreeProg = isProgInstalled("fasttree");
+#if($fasttreeProg){
+ # print "fasttree is...............OK \n";
+#}
+my $miruhero = isProgInstalled("MiruHero");
+if($miruhero){
+  print "MiruHero is...............OK \n";
 }
 my $grapetreeProg = isProgInstalled("grapetree");
 if($grapetreeProg){
@@ -239,7 +243,7 @@ mkdir($outdir);
 if(-d $fastaDir) { system("rm -rf $fastaDir");  }
 mkdir($fastaDir);
 
-    if(-e "${pathToBin}/SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py"){
+    if(-e "${pathToBin}/SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py"){
       print "spotyping is...............OK \n";
     }
     if(-e "${pathToBin}/MIRUReader/MIRUReader.py"){
@@ -270,18 +274,21 @@ foreach my $seq (@tabFiles){
     #SpoTyping, MIRUReader, Galru, and MyKrobe and TBprofiler
     my $spotypingCmd = "";
     my $tbProfilerCmd = "tb-profiler profile --txt "; # DC removed $pathToBin.
-    my $fastaTbProfilerCmd = "tb-profiler fasta_profile --txt ";
+    my $fastaTbProfilerCmd = ""; #"tb-profiler fasta_profile --txt ";
     #print "TBProfiler command: $tbProfilerCmd\n";
-    my $resfinderCmd = "python3 ${pathToBin}/resfinder/run_resfinder.py -o RF -s \"Mycobacterium tuberculosis\" -l 0.6 -t 0.8 --acquired --point -db_res ${pathToBin}/resfinder/db_resfinder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
+    #my $resfinderCmd = "python3 ${pathToBin}/resfinder/run_resfinder.py -o RF -s \"Mycobacterium tuberculosis\" -l 0.6 -t 0.8 --acquired --point -db_res ${pathToBin}/resfinder/db_resfinder -db_point ${pathToBin}/resfinder/db_pointfinder -ifa";
+	my $resfinderCmd = "python3 -m resfinder -o RF -s \"Mycobacterium tuberculosis\" -l 0.6 -t 0.8 --acquired --point -db_res resfinder_db/ -db_disinf disinfinder_db/ -db_point pointfinder_db/ -ifa";
+	#python -m resfinder -o resfinderOUT -s "Mycobacterium tuberculosis" -l 0.6 -t 0.8 --acquired --point -ifa GCF_000195955.fasta
     #RF/pheno_table.txt
 
     if(-e $seq and $isFasta){
         system ("cp -f $seq $fastaDir"); # copy original file into FASTA folder #parsnp –p $cpus –d $fastaDir –r $reference -c
-        $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py --noQuery -o spotyping --seq $seq ";
-        #open GALRU, "galru $seq -t 16 |";
+        #$spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py --noQuery -o spotyping --seq $seq ";
+        $spotypingCmd = "python3 ".$pathToBin."/SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py --noQuery -o spotyping --seq $seq ";
+		#open GALRU, "galru $seq -t 16 |";
         if ($doMiru) { 
           print "MIRU analysis from FASTA input files... \n";
-          open MIRU, "python3 ${pathToBin}MIRUReader/MIRUReader.py -r $seq -p mirus |"; 
+          open MIRU, "python3 ${pathToBin}/MIRUReader/MIRUReader.py -r $seq -p mirus |"; 
           readMiru($seq);
         }
         else { $hMIRU{$seq} = "NA"; }
@@ -323,12 +330,14 @@ foreach my $seq (@tabFiles){
           
         }
 
-        $fastaTbProfilerCmd = $fastaTbProfilerCmd." -d ".$tbProf." ".$seq." ".$seq;
+        $fastaTbProfilerCmd = $tbProfilerCmd." -f ".$seq." -p ".$seq." -t $cpus -d ".$tbProf; #".$seq." ".$seq;
     }
     elsif(-e $seq and $isFastq){
         
-        $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $seq --noQuery -o spotyping ";
-        
+        #$spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $seq --noQuery -o spotyping ";
+        $spotypingCmd = "python3 ".$pathToBin."/SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py $seq --noQuery -o spotyping ";
+        #SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py
+		
         #open GALRU, "galru $seq -t 16 |";
         if ($doMiru) {
           if($spades) { 
@@ -340,7 +349,7 @@ foreach my $seq (@tabFiles){
             system($spadesCmd);
 
             if(-e $pathContig) { 
-              open MIRU, "python3 ".$pathToBin."MIRUReader/MIRUReader.py -r $pathContig -p mirus |";  
+              open MIRU, "python3 ".$pathToBin."/MIRUReader/MIRUReader.py -r $pathContig -p mirus |";  
               readMiru($seq);
 
               if($useResFinder) {
@@ -400,8 +409,11 @@ foreach my $seq (@tabFiles){
       }
 
       if(-e $read1 and -e $read2){
-        $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $read1 $read2 --noQuery -o spotyping ";
-        #open GALRU, "galru $read1 -t 16 |";
+        #$spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $read1 $read2 --noQuery -o spotyping ";
+        $spotypingCmd = "python3 ".$pathToBin."SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py $read1 $read2 --noQuery -o spotyping ";
+        #$spotypingCmd = "python3 ".$pathToBin."SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py $seq --noQuery -o spotyping ";
+        
+		#open GALRU, "galru $read1 -t 16 |";
         if ($doMiru) { 
           if($spades) {
 
@@ -461,11 +473,12 @@ foreach my $seq (@tabFiles){
           $hLineageMyk{$seq} = "NA";
         }
 
-        $tbProfilerCmd = $tbProfilerCmd." -t 16 -d ".$tbProf." -1 ".$read1." -2 ".$read2." -p ".$seq;
+        $tbProfilerCmd = $tbProfilerCmd." -t $cpus -d ".$tbProf." -1 ".$read1." -2 ".$read2." -p ".$seq;
       }
       elsif(-e $read1 and ! -e $read2){
-        $spotypingCmd = "python2 ".$pathToBin."SpoTyping-2.1/SpoTyping-v2.1-commandLine/SpoTyping.py $read1 --noQuery -o spotyping ";
-        #open GALRU, "galru $read1 -t 16 |";
+        $spotypingCmd = "python3 ".$pathToBin."SpoTyping/SpoTyping-v3.0-commandLine/SpoTyping.py $read1 --noQuery -o spotyping ";
+        
+		#open GALRU, "galru $read1 -t 16 |";
         if ($doMiru) {  
           if($spades) { 
             #my $seqFolder = "spades".$seq;
@@ -520,7 +533,7 @@ foreach my $seq (@tabFiles){
           $hResistance{$seq} = "NA";
           $hLineageMyk{$seq} = "NA";
         }
-        $tbProfilerCmd = $tbProfilerCmd." -t 16 -d ".$tbProf." -1 ".$read1." -p ".$seq;
+        $tbProfilerCmd = $tbProfilerCmd." -t $cpus -d ".$tbProf." -1 ".$read1." -p ".$seq;
       }
   
     }
@@ -542,7 +555,7 @@ foreach my $seq (@tabFiles){
 	#$hSPOL{$tab[0]} = $tab[1]."\t".$tab[2]; #$seq
     }
     close (SPO) or die "close file error : $!";
-    system ("rm -f spotyping "); 
+    system ("rm -rf spotyping "); 
     system ("rm -f spotyping.log "); 
     system ("rm -f spotyping.SpoTyping.tmp.* ");
     system ("rm -rf *.fasta.* ");  # remove files generated when using MIRUReader
@@ -596,7 +609,7 @@ foreach my $seq (@tabFiles){
     }
 
     #TBprofiler results
-    if($isFastq or $isList){
+    if(($isFastq or $isList) and $useTBP){
         system($tbProfilerCmd);
 
         #read results
@@ -709,9 +722,9 @@ foreach my $seq (@tabFiles){
 	
         #Fast-Lineage-Caller   (please note that this program is used when TBProf is used because it needs the .vcf file generated by TBP)
         # @ gzip vcf file from TBP directory (gzip -d 
-        my $vcfTBprof = $tbProf."/vcf/".$seq.".targets.vcf.gz";   # .targets.csq.vcf.gz
+        my $vcfTBprof = $tbProf."/vcf/".$seq.".vcf.gz";   # .targets.csq.vcf.gz
         system ("gzip -d -f $vcfTBprof");
-        my $newVCF = $tbProf."/vcf/".$seq.".targets.vcf"; 
+        my $newVCF = $tbProf."/vcf/".$seq.".vcf"; 
 
         open FLC, "fast-lineage-caller --noheader $newVCF |";
         # read FLC results
@@ -724,10 +737,143 @@ foreach my $seq (@tabFiles){
         }
         close (FLC) or die "close file error : $!";
 	
-	if($removeS){
-	  system("rm -rf $tbProf ");
-	}
+	  if($removeS){
+	    system("rm -rf $tbProf ");
+	  }
     }
+	elsif($isFasta and $useTBP){   #IS FASTA
+		
+        system($fastaTbProfilerCmd);
+
+        #read results
+        $resultTBprof = $tbProf."/results/".$seq.".results.txt";
+
+	open (TBP, "<$resultTBprof") or die "open : $!";
+        
+        my $lineageTBP = "";
+        my $drugTBP = "";
+        my $drugListTBP ="";
+        my @tabTBP = ();
+        
+        while (<TBP>) {
+          chomp();
+          if ($_ =~  m/^Strain/) {
+            $_ =~ s/Strain: //;
+            $lineageTBP = $_;
+            
+          }
+          elsif ($_ =~  m/^Drug-resistance/) {
+            $_ =~ s/Drug-resistance: //;
+            $drugTBP = $_;
+            
+          }
+          elsif ($_ =~ m/^Rifampicin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Rifampicin (R) "; }
+          }
+          elsif ($_ =~ m/^Ethambutol/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Ethambutol (R) "; }
+          }
+          elsif ($_ =~ m/^Pyrazinamide/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Pyrazinamide (R) "; }
+            print "IN TBProlier File: $drugListTBP\n";
+          }
+          elsif ($_ =~ m/^Streptomycin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Streptomycin (R) "; }
+          }
+          elsif ($_ =~ m/^Fluoroquinolones/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Fluoroquinolones (R) "; }
+          }
+          elsif ($_ =~  m/^Amikacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Amikacin (R) "; }
+          }
+          elsif ($_ =~  m/^Capreomycin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Capreomycin (R) "; }
+          }
+          elsif ($_ =~  m/^Kanamycin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Kanamycin (R) "; }
+          }
+          elsif ($_ =~  m/^Cycloserine/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Cycloserine (R) "; }
+          }
+          elsif ($_ =~  m/^Ethionamide/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Ethionamide (R) "; }
+          }
+          elsif ($_ =~  m/^Clofazimine/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Clofazimine (R) "; }
+          }
+          elsif ($_ =~  m/^Para-aminosalicylic acid/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Para-aminosalicylic acid (R) "; }
+          }
+          elsif ($_ =~  m/^Delamanid/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Delamanid (R) "; }
+          }
+          elsif ($_ =~  m/^Bedaquiline/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Bedaquiline (R) "; }
+          }
+          elsif ($_ =~  m/^Linezolid/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Linezolid (R) "; }
+          }
+          #else{
+           # $drugListTBP = "ND";
+          #}
+        }
+
+        close (TBP) or die "close file error : $!";
+        $hLineageTBP{$seq} = $lineageTBP ;
+        $hDrugTBP{$seq} = $drugTBP;
+        $hDrugListTBP{$seq} = $drugListTBP;
+	
+        #Fast-Lineage-Caller   (please note that this program is used when TBProf is used because it needs the .vcf file generated by TBP)
+        # @ gzip vcf file from TBP directory (gzip -d 
+        my $vcfTBprof = $tbProf."/vcf/".$seq.".vcf.gz";   # .targets.csq.vcf.gz
+        system ("gzip -d -f $vcfTBprof");
+        my $newVCF = $tbProf."/vcf/".$seq.".vcf"; 
+
+        open FLC, "fast-lineage-caller --noheader $newVCF |";
+        # read FLC results
+        while (<FLC>) {
+          chomp();
+          my @flc = split (/\t/, $_) ;
+          my $first = shift(@flc); 
+          $hFLC{$seq} = join( "\t", @flc ); 
+          #my $stringFLC = join( "\t", @flc ); 
+        }
+        close (FLC) or die "close file error : $!";
+	
+	  if($removeS){
+	    system("rm -rf $tbProf ");
+	  }
+	}
      
 }
 
@@ -793,7 +939,7 @@ close (LINE) or die "close file error : $!";
 
 
 #SpolLineages
-my $spollineages_Cmd = "java -jar ".$pathToBin."SpolLineages/spollineages.jar -i $spollineages_entries -o outputSL.csv -cur -c -sit -uR -S ";
+my $spollineages_Cmd = "java -jar ".$pathToBin."/SpolLineages/spollineages.jar -i $spollineages_entries -o outputSL.csv -cur -c -sit -uR -S ";
 system($spollineages_Cmd);
 
       open (RESLINE, "<outputSL.csv") or die "open : $!";
