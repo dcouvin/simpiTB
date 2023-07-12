@@ -639,6 +639,11 @@ foreach my $seq (@tabFiles){
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Rifampicin (R) "; }
           }
+	  elsif ($_ =~ m/^Isoniazid/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Isoniazid (R) "; }
+          }
           elsif ($_ =~ m/^Ethambutol/) {
             #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
@@ -659,6 +664,31 @@ foreach my $seq (@tabFiles){
             #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Fluoroquinolones (R) "; }
+          }
+	  elsif ($_ =~ m/^Moxifloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Moxifloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Ofloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Ofloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Levofloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Levofloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Ciprofloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Ciprofloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Aminoglycosides/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Aminoglycosides (R) "; }
           }
           elsif ($_ =~  m/^Amikacin/) {
             #$_ =~ s/Drug-resistance: //;  
@@ -772,6 +802,11 @@ foreach my $seq (@tabFiles){
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Rifampicin (R) "; }
           }
+	  elsif ($_ =~ m/^Isoniazid/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") { $drugListTBP .= "Isoniazid (R) "; }
+          }
           elsif ($_ =~ m/^Ethambutol/) {
             #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
@@ -792,6 +827,31 @@ foreach my $seq (@tabFiles){
             #$_ =~ s/Drug-resistance: //;  
             @tabTBP = split (/\t/, $_) ;
             if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Fluoroquinolones (R) "; }
+          }
+	  elsif ($_ =~ m/^Moxifloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Moxifloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Ofloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Ofloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Levofloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Levofloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Ciprofloxacin/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Ciprofloxacin (R) "; }
+          }
+	  elsif ($_ =~ m/^Aminoglycosides/) {
+            #$_ =~ s/Drug-resistance: //;  
+            @tabTBP = split (/\t/, $_) ;
+            if(defined($tabTBP[1]) and $tabTBP[1] eq "R") {$drugListTBP .= "Aminoglycosides (R) "; }
           }
           elsif ($_ =~  m/^Amikacin/) {
             #$_ =~ s/Drug-resistance: //;  
