@@ -24,6 +24,8 @@ parser = argparse.ArgumentParser(description="Prediction from csv file.")
 parser.add_argument("-i", "--input", metavar="fastainput", help="Input fasta file(s)",
                     type=lambda s: file_choices(("fasta", "fna"), s), nargs='+')
 parser.add_argument("-o", "--output", help="Directs the output to a name of your choice", type=str)
+parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0.1')
+
 
 args = parser.parse_args()
 in_file = args.input
