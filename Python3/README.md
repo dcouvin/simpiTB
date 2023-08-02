@@ -12,7 +12,7 @@ To check if Java is installed on your machine, you can run the following command
 java -version
 ```
 
-python programming language must be available in your system to run simpiTB.
+python (python3) programming language must be available in your system to run simpiTB.
 To check if python is installed on your machine, you can run the following command:
 ```bash
 python --version
@@ -26,4 +26,13 @@ Verify if the "tb-profiler" env is activate.
 If not :
 ```bash
 conda activate tb-profiler
+```
+## Starting
+You can use the following command to display the help
+```bash
+python3 simpiTB.py --help
+```
+Command example
+```bash
+python3 simpiTB.py examplefile.fasta -o outputfile
 ```
