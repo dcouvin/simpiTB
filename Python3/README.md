@@ -11,6 +11,12 @@ To check if Java is installed on your machine, you can run the following command
 ```bash
 java -version
 ```
+
+python programming language must be available in your system to run simpiTB.
+To check if python is installed on your machine, you can run the following command:
+```bash
+python --version
+```
 ## Starting
 First, launch the installer
 ```bash
