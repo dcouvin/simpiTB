@@ -17,7 +17,7 @@ To check if python is installed on your machine, you can run the following comma
 ```bash
 python --version
 ```
-## Starting
+## Installation
 First, launch the installer
 ```bash
 sh installer.sh
